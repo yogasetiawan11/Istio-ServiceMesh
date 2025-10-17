@@ -2,6 +2,8 @@
 # What is Service Mesh
 Service mesh help you with the traffic management of your Kubernetes cluster, especially east–west (internal cluster traffic) traffic management of your Kubernetes cluster.
 
+<img width="1303" height="636" alt="Image" src="https://github.com/user-attachments/assets/48dbeeeb-9235-4808-9262-95e0504b8bdb" />
+
 # Challenge in Microservices
 ## communication configuration
 when we move to microservice we introduce a new challenge that we did not have in monolith architecture. 
@@ -24,7 +26,10 @@ you want to be able to monitor how this services out performing, what's http err
 as you see teams of developers of each microservice need to add all this logic to each service and may be to configure some additional stuff in the cluster to handle all this important challenges in microservice application. and this means developer are not working on the actual service logic but are busy adding network logic for metric and security, etc. for each microservice which also add complexity to the services instead of keeping them simple and lightweight.
 
 # Solution
-now wouldn't it make more sense to extract all non business logic out of the microservices and into small ``sidecart`` application that handles all these logic and acs as proxy, and this small application is a third party application the cluster operators can easily configure through an API without worried about how the logic is implemented. and developers can focus on actual business logic.
-and note that you don't have to add this sidecart configuration to your microservice deployment.yaml, because Service Mesh has a controll plan that automatically inject this proxy in every microservice's pod. and now this microservice can talk each other through those proxies (envoy).
-and the network layer for service to service communication consisting of controll plane and the proxy is a Service Mesh.
+Istio can solve this problem by adding a ``sidecar`` inside this sidecar container has a envoy proxy. just like proxy server and this proxy can handle the traffic management of your pods, that means any request that is coming to your pods and any request that is going outside your kubernetes pods will go through this ``sidecar``. the sidecar container is installed in each an every pods in kubernetes cluster.
+example e-commerce app:
+when catalog service try to initiate API calls to the payment service, request will be taken by sidecar container and it will add a certificate or it will initiate a tls. so the API call will be intercepted by sidecar so it goes to sc then from there it will go to sc of payment then this sc will add and the sc of payment intercept the request then it goes to payment app and it will try to verity the certificate from catalog along with verifying the certificate it will also display its tls certificate to the catalog service, this is the ``istio`` and ``mTLS`` concept both catalog and payment trust each other only if they have the valid certificate. so both of inbound and outbound traffic are intercept by sidecar container.
 
+this sidecar container implement mTLS, canary deployment, circuit braker, and observability.
+
+and note that you don't have to add this sidecart configuration to your microservice deployment.yaml, because Service Mesh has a controll plan that automatically inject this proxy in every microservice's pod. and now this microservice can talk each other through those proxies (envoy).
