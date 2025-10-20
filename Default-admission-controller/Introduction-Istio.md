@@ -33,3 +33,15 @@ when catalog service try to initiate API calls to the payment service, request w
 this sidecar container implement mTLS, canary deployment, circuit braker, and observability.
 
 and note that you don't have to add this sidecart configuration to your microservice deployment.yaml, because Service Mesh has a controll plan that automatically inject this proxy in every microservice's pod. and now this microservice can talk each other through those proxies (envoy).
+
+# How does the communication between Istio and API server?
+for that Istio use a concept called as ``admission controller`` which is called dynamic admission controll or admission webhook, example concept of admission cotroll: there's a users who try to create a pod then request will go to API server, basically there's a component in this API server which will basically verify the user is authenticated or authorized to perform this actio or not. if the API has verified this, then it will persist in the object in ETCD.
+Admission controller come in the second step where it can intercept before the request go to ETCD.
+
+<img width="639" height="638" alt="Image" src="https://github.com/user-attachments/assets/458cede4-b91d-4d21-b003-7a8221643c13" />
+
+so before API server create those object in ETCD, admission controller can mutate (modify) or validate (verify few thing in pod or any resources thas is getting created).
+
+for example: you want to create a ``pvc ``(persistent volume claim) and you didn't add a ``storage class`` in the pvc resource, so the request go to API you have authentication and authorization, then API server tries to add the resource to ETCD, before it added, there is an admission controller that is called storage class admission controller It will see if the ``pvc`` has the storage field or not. If it doesn't has it will mutate the object, in the object it will add the field to your ``pvc`` creation request, mutation admission controller will add a new field and this field called as storage class then the object persisted in ETCD
+
+there are 30+ admission controller and you don't need to install them because they are pre-compiled into the API server. for all 30+ admission controller you can just enable or disable them

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota-demo
+spec:
+  hard:
+    cpu: "1"
+    memory: 2Gi
+# I restrict my namespace to only allow use 1 CPU and 2Gi memory in total.
+# so the namespace cannot create more resources if the total resource usage exceeds the quota defined here. 
