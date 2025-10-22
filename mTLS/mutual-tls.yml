@@ -6,3 +6,5 @@ metadata:
 spec:
   mtls:
     mode: STRICT
+
+# once you apply this configuration, only the services that have the certificate can access the service in the default namespace.

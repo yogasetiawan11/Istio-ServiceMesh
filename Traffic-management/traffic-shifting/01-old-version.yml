@@ -1,0 +1,64 @@
+# ========================================================================================================= 
+# This example shows how to route all traffic to the old version (v1) of each service in the Bookinfo application.
+# To achieve this, we define VirtualService resources for each service (productpage, reviews, ratings, details)
+# ========================================================================================================= 
+
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: productpage
+spec:
+  hosts:
+  - productpage
+  http:
+  - route:
+    - destination:
+        host: productpage
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reviews
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ratings
+spec:
+  hosts:
+  - ratings
+  http:
+  - route:
+    - destination:
+        host: ratings
+        subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: details
+spec:
+  hosts:
+  - details
+  http:
+  - route:
+    - destination:
+        host: details
+        subset: v1
+---
+
+#=========================================================================================================
+#  After Apply this VirtualService, all traffic will be routed to the v1 version of each service.
+#  Proceed to create a DestinationRule to define subsets for each service if not already created.
+#  kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
+#=========================================================================================================
